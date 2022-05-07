@@ -1,22 +1,81 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<script src="./jquery-3.4.1.slim.min.js"></script>
 		<script type="text/javascript" src="./app.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
-
-	<body>
-		<p>Ilan and Ben</p>
-		<div id="score">
-			<label for="lblScore">SCORE:</label>
-			<input id="lblScore" type="text" />
+	
+	<body>	
+		<div id="helloLabel">
+			
 		</div>
-		<div id="time">
-			<label for="lblTime">TIME:</label>
-			<input id="lblTime" type="text" />
+		<menu>
+			
+			<div>
+				<li><button id="playButton" style="display: none;">Play</button></li>						
+				<li><button id="signInButton" >Log in</button></li>
+				<li><button id="signUpButton" >Sign in</button></li>
+				<li><button id="settingsButton" style="display: none;">Settings</button></li>
+				<li><button id="aboutButton" >About</button></li>			
+				<li><button id="signOutButton" style="display: none;">Sign out</button></li>
+			</div>
+			
+		</menu>
+		<br><br><br>
+		<div id="header">
+			<header class="page-header">
+				Welcome to PACMAN the killer	
+			</header>
 		</div>
-		<div id="game">
-			<canvas id="canvas" height="600" width="600"></canvas>
-		</div>
+		
+		<content>
+			<div id="signInDiv" style="display: none;">
+				<input id="userNameOnSignIn" placeholder="username" type="text">
+				<input id = "passwdOnSignIn" placeholder="passwd" type="password">	
+				<input id = "buttonOnSignIn" value="Login" type="button">
+			</div>
+	
+	
+			<div id="signUpDiv" style="display: none;">
+				<input id="userNameOnSignUp" placeholder="username" type="text">
+				<input id = "passwdOnSignUp" placeholder="passwd" type="password">	
+				<input id = "fullNameOnSignUp" placeholder="fullname" type="text">	
+				<input id = "emailOnSignUp" placeholder="emailaddress" type="text">
+				<label for="birthday">Birthday:</label>
+				<input type="date" id="birthday" name="birthday">
+				<input id = "buttonOnSignUp" value="Sign Me Up!!" type="button">
+			</div>
+	
+			<div id="settingsDiv" style="display: none;">
+	
+			</div>
+			<div id="aboutDiv" style="display: none;">
+	
+			</div>
+			<!--Game itself-->
+			<div id="gameScope" style="display: none;">
+				<div id="score">
+					<label for="lblScore">SCORE:</label>
+					<input id="lblScore" type="text" />
+				</div>
+				<div id="time">
+					<label for="lblTime">TIME:</label>
+					<input id="lblTime" type="text" />
+				</div>
+				<div id="game">
+					<canvas id="canvas" height="600" width="600"></canvas>
+				</div>
+			</div>
+	
+		</content>
+		
+		<footer>
+			<p>Developers: Ilan Korol, Ben Aidlin<br>
+			<a href="mailto:koroli@post.bgu.ac.il">koroli@post.bgu.ac.il</a>
+			<a href="mailto:benaid@post.bgu.ac.il">benaid@post.bgu.ac.il</a>
+		</p>
+		  </footer>
 	</body>
 </html>

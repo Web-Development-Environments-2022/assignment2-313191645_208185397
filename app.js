@@ -6,11 +6,109 @@ var pac_color;
 var start_time;
 var time_elapsed;
 var interval;
+var database = [];
+var active_user = "";
 
-$(document).ready(function() {
+$(document).ready(function() {	
+	var k = {username: "k", password:"k"}
+	database.push(k)
+	$("#signInButton").click(function(){
+		document.getElementById("signInDiv").style.display = "initial"
+		document.getElementById("signUpDiv").style.display = "none"
+
+	});
+	$("#signUpButton").click(function(){
+		document.getElementById("signUpDiv").style.display = "initial"
+		document.getElementById("signInDiv").style.display = "none"
+	});
+	$("#buttonOnSignIn").click(function(){
+		SignInFunc();
+	})
+	$("#buttonOnSignUp").click(function(){
+		SignUpFunc();
+	})
+	$("#playButton").click(function(){
+		StartGame();
+	})
+	$("#signOutButton").click(function(){
+		SignOutFunc();
+	})
+	$("#aboutButton").click(function(){
+
+	})
+	$("#settingsButton").click(function(){
+
+	})
+});
+
+function SignOutFunc(){
+	//location.reload();
+	active_user = ""
+	$("#helloLabel").text('')	
+	$('#signInButton').show();
+	$('#signUpButton').show();
+	$('#signOutButton').hide();
+	$('#settingsButton').hide();
+	$('#gameScope').hide()
+	$('#playButton').hide();
+}
+
+function SignInFunc(){	
+	let username = $("#userNameOnSignIn").val();
+	let passwd = $("#passwdOnSignIn").val();
+	if (database.find(db => db.username==username && db.password==passwd) != null){
+		active_user = username
+		$("#helloLabel").text('Hello ' + active_user + '!')	
+		$("#userNameOnSignIn").val('')
+		$("#passwdOnSignIn").val('')
+		$("#signInDiv").hide();
+		$('#signInButton').hide();
+		$('#signUpButton').hide();
+		$('#signOutButton').show();
+		$('#settingsButton').show();
+		$('#playButton').show();
+		//StartGame();
+	}
+	else{
+		alert("wrong password or username, please try again")
+		$("#userNameOnSignIn").val('')
+		$("#passwdOnSignIn").val('')		
+	}
+}
+
+function SignUpFunc(){
+	function isEmail(email) {
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		return regex.test(email);
+	}
+	let valid = $("#userNameOnSignUp").val() != '' 
+		&& $("#passwdOnSignUp").val().length >= 6
+		&& (/\d/.test($("#passwdOnSignUp").val())) 
+		&& /[a-zA-Z]/g.test($("#passwdOnSignUp").val())
+		&& !(/\d/.test($("#fullNameOnSignUp").val())) 
+		&& isEmail($("#emailOnSignUp").val());
+	if(!valid){
+		alert("please check your details");		
+	}
+	else{
+		database.push({username: $("#userNameOnSignUp").val(), password:$("#passwdOnSignUp").val()})		
+		$("#signUpDiv").hide();		
+		$("#signInDiv").show();		
+		
+	}
+
+}
+
+function StartGame(){
+	if(active_user == null || active_user == '') {
+		alert("you need to sign in first!");
+		return;
+	}
+	$("#gameScope").show();
 	context = canvas.getContext("2d");
 	Start();
-});
+}
+
 
 function Start() {
 	board = new Array();

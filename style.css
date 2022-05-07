@@ -1,0 +1,81 @@
+#header{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+header.page-header {
+    background: no-repeat left/cover url(/extensions/f4bf4154f4ef9c44ed2c57e5835460c2.jpg);
+    display: inline-flex;
+    height: 159px;
+    min-width: 500px;
+    
+    justify-content: right;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(149, 147, 147);
+    text-shadow: rgb(22, 21, 21) 0 0 .2em;
+}
+
+header.page-header > h1 {
+    font: bold calc(1em + 2 * (100vw - 120px) / 100) 'Dancing Script', cursive,
+        fantasy;
+    margin: 2%;
+}
+
+body{
+    background-color: #000;
+}
+
+menu {
+    margin-top: -28px;
+	margin-left: -10px;
+	position: fixed;
+	width: 100%;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #000;
+	justify-content: center;
+	display: flex;
+  }
+  
+  li {
+	float: left;
+  }
+  
+  li button {
+	display: block;
+	color: rgb(133, 131, 131);
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+    background-color: #333;
+  }
+  
+  li button:hover {
+	background-color: #111;
+  }
+
+  #helloLabel{
+      text-align: left;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      color: rgba(243, 84, 84, 0.53)
+  }
+
+  footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(216, 206, 55);
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(10, 10, 10);    
+    text-align: center;
+    
+  }
+  footer a{
+    color: rgb(10, 10, 10);    
+  }
