@@ -31,21 +31,21 @@
 		</div>
 		
 		<content>
-			<div id="signInDiv" style="display: none;">
-				<input id="userNameOnSignIn" placeholder="username" type="text">
-				<input id = "passwdOnSignIn" placeholder="passwd" type="password">	
-				<input id = "buttonOnSignIn" value="Login" type="button">
+			<div id="signInDiv" style="display: none;"> <br>
+				<input id="userNameOnSignIn" placeholder="username" type="text"> <br>
+				<input id = "passwdOnSignIn" placeholder="passwd" type="password">	<br>
+				<input id = "buttonOnSignIn" value="Login" type="button"> <br>
 			</div>
 	
 	
 			<div id="signUpDiv" style="display: none;">
-				<input id="userNameOnSignUp" placeholder="username" type="text">
-				<input id = "passwdOnSignUp" placeholder="passwd" type="password">	
-				<input id = "fullNameOnSignUp" placeholder="fullname" type="text">	
-				<input id = "emailOnSignUp" placeholder="emailaddress" type="text">
-				<label for="birthday">Birthday:</label>
-				<input type="date" id="birthday" name="birthday">
-				<input id = "buttonOnSignUp" value="Sign Me Up!!" type="button">
+				<input id="userNameOnSignUp" placeholder="username" type="text"> <br>
+				<input id = "passwdOnSignUp" placeholder="passwd" type="password">	<br>
+				<input id = "fullNameOnSignUp" placeholder="fullname" type="text">	<br>
+				<input id = "emailOnSignUp" placeholder="emailaddress" type="text"><br>
+				<label for="birthday">Birthday:</label><br>
+				<input type="date" id="birthday" name="birthday"><br>
+				<input id = "buttonOnSignUp" value="Sign Me Up!!" type="button"><br>
 			</div>
 	
 			<div id="settingsDiv" style="display: none;">
@@ -56,21 +56,31 @@
 			</div>
 			<!--Game itself-->
 			<div id="gameScope" style="display: none;">
-				<div id="score">
-					<label for="lblScore">SCORE:</label>
-					<input id="lblScore" type="text" />
-				</div>
-				<div id="time">
-					<label for="lblTime">TIME:</label>
-					<input id="lblTime" type="text" />
-				</div>
-				<div id="life">
-					<label for="lblLife">LIFE:</label>
-					<input id="lblLife" type="text" />
-				</div>
 				<div id="game">
 					<canvas id="canvas" height="600" width="600"></canvas>
 				</div>
+				<div id="stat">
+					<div id="score">
+						<h1>
+							<label for="lblScore">SCORE:</label>
+							<input id="lblScore" type="text" />
+						</h1>
+						
+					</div>
+					<div id="time">
+						<h1>
+							<label for="lblTime">TIME:</label>
+							<input id="lblTime" type="text" />
+						</h1>						
+					</div>
+					<div id="life">
+						<h1>
+							<label for="lblLife">LIFE:</label>
+							<input id="lblLife" type="text" />
+						</h1>
+						
+					</div>
+				</div>				
 			</div>
 	
 		</content>

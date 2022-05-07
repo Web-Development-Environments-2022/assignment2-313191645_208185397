@@ -13,7 +13,7 @@ var database = [];
 var active_user = "";
 var life = 5;
 var enemy_move_counter = 1;
-
+var audio = new Audio('extensions/audio/sound.mp3');
 // settings
 var monsters_amount = 2; // 1-4
 var game_time = 90; // minimum 60
@@ -50,14 +50,19 @@ $(document).ready(function() {
 		StartGame();
 	})
 	$("#signOutButton").click(function(){
+		audio.pause();
+		audio.currentTime = 0;
 		SignOutFunc();
 	})
 	$("#aboutButton").click(function(){
-
+		audio.pause();
+		audio.currentTime = 0;
 	})
 	$("#settingsButton").click(function(){
-
+		audio.pause();
+		audio.currentTime = 0;
 	})
+	
 });
 
 function SignOutFunc(){
@@ -118,7 +123,8 @@ function SignUpFunc(){
 
 }
 
-function StartGame(){
+function StartGame(){	
+	audio.play();
 	if(active_user == null || active_user == '') {
 		alert("you need to sign in first!");
 		return;
@@ -128,31 +134,81 @@ function StartGame(){
 	Start();
 }
 
+function ResetMonsters(){		
+	monsters = []
+	// random monsters
+	for (var k=0;k<monsters_amount;k++){
+		let monster = new Object();
+		let random = Math.random();
+		if(random<0.25){
+			monster.i = 0;
+			monster.j = 0;
+		}
+		else if(random<0.5){
+			monster.i = 0;
+			monster.j = 9;
+		}
+		else if(random<0.75){
+			monster.i = 9;
+			monster.j = 0;
+		}
+		else {
+			monster.i = 9;
+			monster.j = 9;	
+		}
+		monsters.push(monster);
+	}
+}
+
 function remap(){
 	board = new Array();
 	monsters = []	
 	var cnt = 100;
-	var food_remain = 50;
+	//var food_remain = 50;
+	// food<price> = <amount>
+	var food25 = 5;
+	var food15 = 15;
+	var food5 = 30;
 	var pacman_remain = 1;
+	var wall1i = Math.round(Math.random() *(6) + 1)
+	var wall1j = Math.round(Math.random() *(6) + 1)
+	var wall2i = Math.round(Math.random() *(6) + 1)
+	var wall2j = Math.round(Math.random() *(6) + 1)
+	var wall3i = Math.round(Math.random() *(6) + 1)
+	var wall3j = Math.round(Math.random() *(6) + 1)
 	start_time = new Date();
 	for (var i = 0; i < 10; i++) {
 		board[i] = new Array();
 		//put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
 		for (var j = 0; j < 10; j++) {
 			if (
-				(i == 3 && j == 3) ||
-				(i == 3 && j == 4) ||
-				(i == 3 && j == 5) ||
-				(i == 6 && j == 1) ||
-				(i == 6 && j == 2)
+				(i == wall1i && j == wall1j) ||				
+				(i == wall1i+1 && j == wall1j) ||
+				(i == wall1i+2 && j == wall1j) ||
+				(i == wall2i && j == wall2j) ||
+				(i == wall2i && j == wall2j+1) ||
+				(i == wall3i && j == wall3j) ||
+				(i == wall3i && j == wall3j+1) ||
+				(i == wall3i && j == wall3j+2)
 			) {
 				board[i][j] = 4;
 			} else {
 				var randomNum = Math.random();
-				if (randomNum <= (1.0 * food_remain) / cnt) {
-					food_remain--;
-					board[i][j] = 1;
-				} else if (randomNum < (1.0 * (pacman_remain + food_remain)) / cnt) {
+				if (randomNum <= (1.0 * (food25+food15+food5)) / cnt) {
+					var randomforfood = Math.random();
+					if(randomforfood < (1.0 * (food25)) / (food25+food15+food5)){
+						food25 -= 1
+						board[i][j] = 25;
+					}
+					else if(randomforfood < (1.0 * (food25 + food15)) / (food25+food15+food5)){
+						food15 -= 1
+						board[i][j] = 15;
+					}
+					else{
+						food5 -= 1
+						board[i][j] = 5;
+					}					
+				} else if (randomNum < (1.0 * (pacman_remain + food25+food15+food5)) / cnt) {
 					shape.i = i;
 					shape.j = j;
 					pacman_remain--;
@@ -191,10 +247,21 @@ function remap(){
 	moving_score.i = moving_cell[0];
 	moving_score.j = moving_cell[1];
 	// random place
-	while (food_remain > 0) {
+	while (food25+food15+food5 > 0) {
 		var emptyCell = findRandomEmptyCell(board);
-		board[emptyCell[0]][emptyCell[1]] = 1;
-		food_remain--;
+		var randomforfood = Math.random();
+		if(randomforfood < (1.0 * (food25)) / (food25+food15+food5)){
+			food25 -= 1
+			board[emptyCell[0]][emptyCell[1]] = 25;
+		}
+		else if(randomforfood < (1.0 * (food25 + food15)) / (food25+food15+food5)){
+			food15 -= 1
+			board[emptyCell[0]][emptyCell[1]] = 15;
+		}
+		else{
+			food5 -= 1
+			board[emptyCell[0]][emptyCell[1]] = 5;
+		}		
 	}
 	keysDown = {};
 }
@@ -221,6 +288,7 @@ function Start() {
 		},
 		false
 	);
+	try{clearInterval(interval);}catch{}
 	interval = setInterval(UpdatePosition, 85);
 }
 
@@ -264,11 +332,21 @@ function Draw() {
 				var img = new Image();
 				img.src = "extensions/gamefigures/pacman" + direction +".png";					
 				context.drawImage(img, center.x - 30, center.y-30)				
-			} else if (board[i][j] == 1) {
+			} else if (board[i][j] == 5) {
 				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-				context.fillStyle = "white"; //color
+				context.fillStyle = prize_5; //color
 				context.fill();
+			}else if (board[i][j] == 15) {
+				context.beginPath();
+				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
+				context.fillStyle = prize_15; //color
+				context.fill();
+			}else if (board[i][j] == 25) {
+				context.beginPath();
+				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
+				context.fillStyle = prize_25; //color
+				context.fill();			
 			} else if (board[i][j] == 4) {
 				context.beginPath();
 				context.rect(center.x - 30, center.y - 30, 60, 60);
@@ -322,8 +400,8 @@ function UpdatePosition() {
 			direction = "right"
 		}
 	}
-	if (board[shape.i][shape.j] == 1) {
-		score++;
+	if (board[shape.i][shape.j] == 5 || board[shape.i][shape.j] == 15 || board[shape.i][shape.j] == 25) {
+		score+=board[shape.i][shape.j];
 	}
 	if(moving_score!=null && shape.i == moving_score.i && shape.j == moving_score.j){
 		score+=50
@@ -346,12 +424,10 @@ function UpdatePosition() {
 			score -= 10;
 			life -= 1;
 			if (life == 0){
-				window.clearInterval(interval);
-				window.alert("Loser!");				
-				score = 0;
-				life = 5;
+				ResetGame();
+				window.alert("Loser!");												
 			}
-			remap();		
+			ResetMonsters();		
 		}
 		if(enemy_move_counter > 0){
 			 enemy_move_counter-=1;
@@ -376,17 +452,21 @@ function UpdatePosition() {
 	time_elapsed = (currentTime - start_time) / 1000;	
 	
 	if(time_elapsed>=game_time){
-		window.clearInterval(interval);
-		window.alert("You are better than " + score + " points!");
-		score = 0;
-		life = 5;
+		ResetGame();
+		window.alert("You are better than " + score + " points!");		
 	}
-	if (score == 100) {
-		window.clearInterval(interval);
+	if (score >= 100) {
+		ResetGame();
 		window.alert("Winner!!!");
-		score = 0;
-		life = 5;
 	} else {
 		Draw();
 	}
+}
+function ResetGame(){
+	window.clearInterval(interval);
+	score = 0;
+	life = 5;
+	audio.pause();
+	audio.currentTime = 0;
+	document.getElementById("gameScope").style.display = "none"	
 }

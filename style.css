@@ -79,3 +79,31 @@ menu {
   footer a{
     color: rgb(10, 10, 10);    
   }
+  #gameScope{
+    display: flex;
+  }
+  #stat{    
+    padding: 5%;
+    color: wheat;
+  }
+  canvas{
+    padding: 5%;
+  }
+  input{
+    text-align: center;
+    background-color: wheat;
+    color: #000;
+    border-bottom: 2px;
+    font-size: large;
+    margin: 1px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+  content{
+    display: block;
+    text-align: center;
+    color: rgb(109, 106, 106);
+    border-bottom: 2px;
+    border: "none";
+    font-size: large;
+    margin: 1px;
+  }
