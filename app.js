@@ -1,13 +1,28 @@
 var context;
 var shape = new Object();
+var monsters = [];
 var board;
-var score;
+var score = 0;
 var pac_color;
 var start_time;
 var time_elapsed;
 var interval;
 var database = [];
 var active_user = "";
+var life = 5;
+// settings
+var monsters_amount = 2; // 1-4
+var game_time = 90; // minimum 60
+var prize_amount = 75; // 50-90
+var move_up = 38;
+var move_down = 40;
+var move_left = 37;
+var move_right = 39;
+var prize_5 = "white"
+var prize_15 = "green"
+var prize_25 = "purple"
+var direction = "right"
+
 
 $(document).ready(function() {	
 	var k = {username: "k", password:"k"}
@@ -112,7 +127,7 @@ function StartGame(){
 
 function Start() {
 	board = new Array();
-	score = 0;
+	//score = 0;
 	pac_color = "yellow";
 	var cnt = 100;
 	var food_remain = 50;
@@ -145,7 +160,29 @@ function Start() {
 				}
 				cnt--;
 			}
+		}		
+	}
+	for (var k=0;k<monsters_amount;k++){
+		let monster = new Object();
+		let random = Math.random();
+		if(random<0.25){
+			monster.i = 0;
+			monster.j = 0;
 		}
+		else if(random<0.5){
+			monster.i = 0;
+			monster.j = 9;
+		}
+		else if(random<0.75){
+			monster.i = 9;
+			monster.j = 0;
+		}
+		else {
+			monster.i = 9;
+			monster.j = 9;	
+		}
+		monsters.push(monster);
+		//board[monster.i][monster.j] = 3;
 	}
 	while (food_remain > 0) {
 		var emptyCell = findRandomEmptyCell(board);
@@ -167,7 +204,7 @@ function Start() {
 		},
 		false
 	);
-	interval = setInterval(UpdatePosition, 250);
+	interval = setInterval(UpdatePosition, 100);
 }
 
 function findRandomEmptyCell(board) {
@@ -181,16 +218,16 @@ function findRandomEmptyCell(board) {
 }
 
 function GetKeyPressed() {
-	if (keysDown[38]) {
-		return 1;
+	if (keysDown[38]) { //up
+		return 1; 
 	}
-	if (keysDown[40]) {
+	if (keysDown[40]) { // down
 		return 2;
 	}
-	if (keysDown[37]) {
+	if (keysDown[37]) { //left
 		return 3;
 	}
-	if (keysDown[39]) {
+	if (keysDown[39]) { // right
 		return 4;
 	}
 }
@@ -198,34 +235,52 @@ function GetKeyPressed() {
 function Draw() {
 	canvas.width = canvas.width; //clean board
 	lblScore.value = score;
-	lblTime.value = time_elapsed;
+	lblTime.value = time_elapsed;	
 	for (var i = 0; i < 10; i++) {
 		for (var j = 0; j < 10; j++) {
 			var center = new Object();
 			center.x = i * 60 + 30;
 			center.y = j * 60 + 30;
 			if (board[i][j] == 2) {
-				context.beginPath();
+				/* context.beginPath();
 				context.arc(center.x, center.y, 30, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
 				context.lineTo(center.x, center.y);
 				context.fillStyle = pac_color; //color
 				context.fill();
 				context.beginPath();
 				context.arc(center.x + 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
-				context.fillStyle = "black"; //color
-				context.fill();
+				context.fillStyle = "white"; //color
+				context.fill(); */
+				var img = new Image();
+				img.src = "extensions/gamefigures/pacman" + direction +".png";	
+				//context.scale(0,-1);			
+				context.drawImage(img, center.x - 30, center.y-30)
+				//context.restore();
+
 			} else if (board[i][j] == 1) {
 				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-				context.fillStyle = "black"; //color
+				context.fillStyle = "white"; //color
 				context.fill();
 			} else if (board[i][j] == 4) {
 				context.beginPath();
 				context.rect(center.x - 30, center.y - 30, 60, 60);
-				context.fillStyle = "grey"; //color
+				context.fillStyle = "white"; //color
 				context.fill();
-			}
+			}/* else if(board[i][j] == 3){
+				var img2 = new Image();
+				img2.src = "extensions/gamefigures/enemy1.png"
+				context.drawImage(img2, center.x - 30, center.y-30)
+			}*/
 		}
+	}
+
+	for (let k=0;k<monsters_amount;k++){
+		centerx = monsters[k].i * 60 + 30;
+		centery = monsters[k].j * 60 + 30;
+		var img2 = new Image();
+		img2.src = "extensions/gamefigures/enemy1.png"
+		context.drawImage(img2, centerx - 30, centery-30)
 	}
 }
 
@@ -235,35 +290,71 @@ function UpdatePosition() {
 	if (x == 1) {
 		if (shape.j > 0 && board[shape.i][shape.j - 1] != 4) {
 			shape.j--;
+			direction = "up"
 		}
 	}
 	if (x == 2) {
 		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
 			shape.j++;
+			direction = "down"
 		}
 	}
 	if (x == 3) {
 		if (shape.i > 0 && board[shape.i - 1][shape.j] != 4) {
 			shape.i--;
+			direction = "left"
 		}
 	}
 	if (x == 4) {
 		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
 			shape.i++;
+			direction = "right"
 		}
 	}
 	if (board[shape.i][shape.j] == 1) {
 		score++;
 	}
+
+	for(let k=0;k<monsters_amount;k++){
+		if(shape.i == monsters[k].i && shape.j == monsters[k].j){
+			score -= 10;
+			life -= 1;
+			if (life == 0){
+				window.clearInterval(interval);
+				window.alert("Loser!");
+				score = 0
+				life = 5
+			}
+			Start();
+		}
+	}
+	/*
+	if (board[shape.i][shape.j] == 3) {
+		score -= 10;
+		life -= 1;
+		if (life == 0){
+			window.clearInterval(interval);
+			window.alert("Loser!");
+			score = 0
+			life = 5
+		}
+		Start();
+	}*/
 	board[shape.i][shape.j] = 2;
 	var currentTime = new Date();
-	time_elapsed = (currentTime - start_time) / 1000;
-	if (score >= 20 && time_elapsed <= 10) {
-		pac_color = "green";
-	}
-	if (score == 50) {
+	time_elapsed = (currentTime - start_time) / 1000;	
+	
+	if(time_elapsed>=game_time){
 		window.clearInterval(interval);
-		window.alert("Game completed");
+		window.alert("You are better than " + score + " points!");
+		score = 0;
+		life = 5;
+	}
+	if (score == 100) {
+		window.clearInterval(interval);
+		window.alert("Winner!!!");
+		score = 0;
+		life = 5;
 	} else {
 		Draw();
 	}
