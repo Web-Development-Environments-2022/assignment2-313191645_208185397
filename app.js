@@ -68,6 +68,7 @@ $(document).ready(function() {
 function SignOutFunc(){
 	//location.reload();
 	active_user = ""
+	document.body.style.setProperty("zoom", "100%");
 	$("#helloLabel").text('')	
 	$('#signInButton').show();
 	$('#signUpButton').show();
@@ -124,6 +125,7 @@ function SignUpFunc(){
 }
 
 function StartGame(){	
+	document.body.style.setProperty("zoom", "65%");
 	audio.play();
 	if(active_user == null || active_user == '') {
 		alert("you need to sign in first!");
@@ -469,4 +471,6 @@ function ResetGame(){
 	audio.pause();
 	audio.currentTime = 0;
 	document.getElementById("gameScope").style.display = "none"	
+	document.body.style.setProperty("zoom", "100%");
+	
 }

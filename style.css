@@ -10,9 +10,9 @@ header.page-header {
     display: inline-flex;
     height: 159px;
     min-width: 500px;
-    
+    font-size: large;
     justify-content: right;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family:'Games', sans-serif;
     color: rgb(149, 147, 147);
     text-shadow: rgb(22, 21, 21) 0 0 .2em;
 }
@@ -48,8 +48,9 @@ menu {
   li button {
 	display: block;
 	color: rgb(133, 131, 131);
-	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-	text-align: center;
+	font-family: 'Games', sans-serif;
+  font-size: large;
+  text-align: center;
 	padding: 14px 16px;
 	text-decoration: none;
     background-color: #333;
@@ -61,7 +62,8 @@ menu {
 
   #helloLabel{
       text-align: left;
-      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-family: 'Games', sans-serif;
+      font-size: large;
       color: rgba(243, 84, 84, 0.53)
   }
 
@@ -71,7 +73,8 @@ menu {
     bottom: 0;
     width: 100%;
     background-color: rgb(216, 206, 55);
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Games', sans-serif;
+    font-size: large;
     color: rgb(10, 10, 10);    
     text-align: center;
     
@@ -85,9 +88,21 @@ menu {
   #stat{    
     padding: 5%;
     color: wheat;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: large;
+  }
+  .inGameLbl{
+    font-family: 'Games', sans-serif;
+    font-size: 100px;
+
+  }
+  .inGameLbltxt{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 100px;
   }
   canvas{
     padding: 5%;
+    zoom: 110%;
   }
   input{
     text-align: center;
@@ -96,7 +111,8 @@ menu {
     border-bottom: 2px;
     font-size: large;
     margin: 1px;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Games', sans-serif;
+    font-size: large;
   }
   content{
     display: block;
