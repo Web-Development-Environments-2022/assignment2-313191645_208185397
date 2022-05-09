@@ -14,14 +14,15 @@ var active_user = "";
 var life = 5;
 var enemy_move_counter = 1;
 var audio = new Audio('extensions/audio/sound.mp3');
+var keypress;
 // settings
-var monsters_amount = 2; // 1-4
-var game_time = 90; // minimum 60
-var prize_amount = 75; // 50-90
-var move_up = 38;
-var move_down = 40;
-var move_left = 37;
-var move_right = 39;
+var monsters_amount = 4; // 1-4
+var game_time = 10; // minimum 60
+var prize_amount = 10; // 50-90
+var move_up = [38, "UpArrow"];
+var move_down = [40, "DownArrow"];
+var move_left = [37, "LeftArrow"];
+var move_right = [39, "RightArrow"];
 var prize_5 = "white"
 var prize_15 = "green"
 var prize_25 = "purple"
@@ -34,11 +35,13 @@ $(document).ready(function() {
 	$("#signInButton").click(function(){
 		document.getElementById("signInDiv").style.display = "initial"
 		document.getElementById("signUpDiv").style.display = "none"
+		$("#aboutDiv").hide();
 
 	});
 	$("#signUpButton").click(function(){
 		document.getElementById("signUpDiv").style.display = "initial"
 		document.getElementById("signInDiv").style.display = "none"
+		$("#aboutDiv").hide();
 	});
 	$("#buttonOnSignIn").click(function(){
 		SignInFunc();
@@ -47,23 +50,73 @@ $(document).ready(function() {
 		SignUpFunc();
 	})
 	$("#playButton").click(function(){
+		//$('#settingsDiv	').hide();
+		ResetGame();
+		$("#aboutDiv").hide();
 		StartGame();
 	})
 	$("#signOutButton").click(function(){
+		ResetGame();
+		$('#settingsDiv	').hide();
+		$("#aboutDiv").hide();
 		audio.pause();
 		audio.currentTime = 0;
 		SignOutFunc();
 	})
 	$("#aboutButton").click(function(){
+		ResetGame();
+		$("#aboutDiv").show();
+		$("#signUpDiv").hide();
+		$("#signInDiv").hide();
+		$('#settingsDiv	').hide();
 		audio.pause();
 		audio.currentTime = 0;
+		$("#gameScope").hide();		
+		$('#settingsDiv	').hide();
+
 	})
 	$("#settingsButton").click(function(){
+		ResetGame();
+		$("#aboutDiv").hide();
+		document.body.style.setProperty("zoom", "100%");		
 		audio.pause();
 		audio.currentTime = 0;
+		$("#gameScope").hide();
+		$('#settingsDiv	').hide();
+
+		$('#settingsDiv	').show();
 	})
-	
+
+	$( "#upDirectionChoice" ).val(move_up[1].toString())
+	$( "#downDirectionChoice" ).val(move_down[1].toString())
+	$( "#leftDirectionChoice" ).val(move_left[1].toString())
+	$( "#rightDirectionChoice" ).val(move_right[1].toString())
+
+	$( "#upDirectionChoice" ).on( "keydown", function( event ) {
+		$( "#upDirectionChoice" ).val(event.key)
+		move_up = [event.keyCode, event.key]
+    });
+
+	$( "#downDirectionChoice" ).on( "keydown", function( event ) {
+		$( "#downDirectionChoice" ).val(event.key)
+		move_down = [event.keyCode, event.key]
+    });
+
+	$( "#leftDirectionChoice" ).on( "keydown", function( event ) {
+		$( "#leftDirectionChoice" ).val(event.key)
+		move_left = [event.keyCode, event.key]
+    });
+
+	$( "#rightDirectionChoice" ).on( "keydown", function( event ) {
+		$( "#rightDirectionChoice" ).val(event.key)
+		move_right = [event.keyCode, event.key]
+    });
+
+	$("#randomSettings").click(function(){
+		RandomSettings();
+	});
 });
+
 
 function SignOutFunc(){
 	//location.reload();
@@ -75,6 +128,7 @@ function SignOutFunc(){
 	$('#signOutButton').hide();
 	$('#settingsButton').hide();
 	$('#gameScope').hide()
+
 	$('#playButton').hide();
 }
 
@@ -124,14 +178,33 @@ function SignUpFunc(){
 
 }
 
+function RandomSettings(){
+	(Math.random() *(6) + 1)
+	$("#prizeAmountChoice").val((Math.round(Math.random() *(40) + 50)).toString())
+	$("#timeAmountChoice").val((Math.round(Math.random() *(40) + 60)).toString())
+	$("#monsterChoice").val((Math.round(Math.random() *(3) + 1)).toString())
+	arr = ["white", "yellow", "orange", "blue", "purple", "green", "red"]
+	first = Math.round(Math.random() *(6))
+	$("#simplePriceChoice").val(arr[first])
+	arr.splice(first, 1)
+
+	second = Math.round(Math.random() *(5))
+	$("#mediumPriceChoice").val(arr[second])
+	arr.splice(second, 1)
+	
+	third = Math.round(Math.random() *(4))
+	$("#bestPriceChoice").val(arr[third])		
+}
+
+
 function StartGame(){	
-	document.body.style.setProperty("zoom", "65%");
-	audio.play();
 	if(active_user == null || active_user == '') {
 		alert("you need to sign in first!");
 		return;
 	}
 	$("#gameScope").show();
+	$('#settingsDiv	').show();
+
 	context = canvas.getContext("2d");
 	Start();
 }
@@ -168,9 +241,9 @@ function remap(){
 	var cnt = 100;
 	//var food_remain = 50;
 	// food<price> = <amount>
-	var food25 = 5;
-	var food15 = 15;
-	var food5 = 30;
+	var food25 = Math.round(0.1 * prize_amount);
+	var food15 = Math.round(0.3 * prize_amount);
+	var food5 = Math.round(0.6 * prize_amount);
 	var pacman_remain = 1;
 	var wall1i = Math.round(Math.random() *(6) + 1)
 	var wall1j = Math.round(Math.random() *(6) + 1)
@@ -265,10 +338,67 @@ function remap(){
 			board[emptyCell[0]][emptyCell[1]] = 5;
 		}		
 	}
+	// medicine and clock
+	var emptyMed = findRandomNotWallCell(board);
+	var emptyClock = findRandomNotWallCell(board);
+	board[emptyMed[0]][emptyMed[1]] = 100;
+	board[emptyClock[0]][emptyClock[1]] = 200;
+
 	keysDown = {};
 }
 
+
+
+function ApplySettings(){
+	if(isNaN($("#prizeAmountChoice").val())){
+		alert("Please insert a number for prize amount in settings!"); 
+		$("#gameScope").hide();
+		$('#settingsDiv	').show();
+		return false;
+	}
+	prize_amount = parseInt($("#prizeAmountChoice").val())
+	if(prize_amount<50 || prize_amount>95){
+		alert("Please check prize amount in settings, must be 50<amount<95.");
+		$("#gameScope").hide();
+		$('#settingsDiv	').show();
+		return false;
+	}
+	if(isNaN($("#timeAmountChoice").val())){
+		alert("Please insert a number for time amount in settings!"); 
+		$("#gameScope").hide();
+		$('#settingsDiv	').show();
+		return false;
+	}
+	game_time = parseInt($("#timeAmountChoice").val())
+	if(game_time<60){
+		alert("Please insert a minimum of 60 as game time");
+		$("#gameScope").hide();
+		$('#settingsDiv	').show();
+		return false;
+	}
+	if(isNaN($("#monsterChoice").val())){
+		alert("Please insert a number for monster amount in settings!"); 
+		$("#gameScope").hide();
+		$('#settingsDiv	').show();
+		return false;
+	}
+	monsters_amount = parseInt($("#monsterChoice").val())
+	if(monsters_amount<1 || monsters_amount>4){
+		alert("Please insert a valid monster amount (0<amount<5).");
+		$("#gameScope").hide();
+		$('#settingsDiv	').show();
+		return false;
+	}
+	prize_5 = $("#simplePriceChoice").val();	
+	prize_15 = $("#mediumPriceChoice").val();
+	prize_25 = $("#bestPriceChoice").val();
+	return true;
+}
+
 function Start() {	
+	if(!ApplySettings()) return;
+	document.body.style.setProperty("zoom", "65%");
+	audio.play();
 	moving_score = new Object();
 	monsters_images = [];
 	for(let l=0;l<monsters_amount;l++){
@@ -304,17 +434,27 @@ function findRandomEmptyCell(board) {
 	return [i, j];
 }
 
+function findRandomNotWallCell(){
+	var i = Math.floor(Math.random() * 9 + 1);
+	var j = Math.floor(Math.random() * 9 + 1);
+	while (board[i][j] != 0 && board[i][j] != 5 && board[i][j] != 15 && board[i][j] != 25) {
+		i = Math.floor(Math.random() * 9 + 1);
+		j = Math.floor(Math.random() * 9 + 1);
+	}
+	return [i, j];
+}
+
 function GetKeyPressed() {
-	if (keysDown[38]) { //up
+	if (keysDown[move_up[0]]) { //up
 		return 1; 
 	}
-	if (keysDown[40]) { // down
+	if (keysDown[move_down[0]]) { // down
 		return 2;
 	}
-	if (keysDown[37]) { //left
+	if (keysDown[move_left[0]]) { //left
 		return 3;
 	}
-	if (keysDown[39]) { // right
+	if (keysDown[move_right[0]]) { // right
 		return 4;
 	}
 }
@@ -350,10 +490,29 @@ function Draw() {
 				context.fillStyle = prize_25; //color
 				context.fill();			
 			} else if (board[i][j] == 4) {
-				context.beginPath();
+				var imgwall = new Image();
+				imgwall.src = "extensions/wall.jpg";
+				context.drawImage(imgwall, center.x - 30, center.y-30)				
+				/*context.beginPath();
 				context.rect(center.x - 30, center.y - 30, 60, 60);
 				context.fillStyle = "white"; //color
-				context.fill();
+				context.fill();*/
+			}else if (board[i][j] == 100) {
+				var imgwall = new Image();
+				imgwall.src = "extensions/med.jpg";
+				context.drawImage(imgwall, center.x - 30, center.y-30)				
+				/*context.beginPath();
+				context.rect(center.x - 30, center.y - 30, 60, 60);
+				context.fillStyle = "white"; //color
+				context.fill();*/
+			}else if (board[i][j] == 200) {
+				var imgwall = new Image();
+				imgwall.src = "extensions/clock.jpg";
+				context.drawImage(imgwall, center.x - 30, center.y-30)				
+				/*context.beginPath();
+				context.rect(center.x - 30, center.y - 30, 60, 60);
+				context.fillStyle = "white"; //color
+				context.fill();*/
 			}
 		}
 	}
@@ -405,6 +564,14 @@ function UpdatePosition() {
 	if (board[shape.i][shape.j] == 5 || board[shape.i][shape.j] == 15 || board[shape.i][shape.j] == 25) {
 		score+=board[shape.i][shape.j];
 	}
+	if (board[shape.i][shape.j] == 100) {
+		life += 1;
+		board[shape.i][shape.j] = 0;
+	}
+	if (board[shape.i][shape.j] == 200) {	
+		start_time.setSeconds(start_time.getSeconds()+10)	;	
+		board[shape.i][shape.j] = 0;
+	}
 	if(moving_score!=null && shape.i == moving_score.i && shape.j == moving_score.j){
 		score+=50
 		moving_score = null;
@@ -429,13 +596,14 @@ function UpdatePosition() {
 				ResetGame();
 				window.alert("Loser!");												
 			}
-			ResetMonsters();		
+			ResetMonsters();
+			return;		
 		}
 		if(enemy_move_counter > 0){
 			 enemy_move_counter-=1;
 			 continue;
 		}
-		enemy_move_counter = 10;
+		enemy_move_counter = 8;
 		if(shape.i > monsters[k].i && board[monsters[k].i+1][monsters[k].j] != 4){
 			monsters[k].i+=1;
 		}
@@ -454,23 +622,27 @@ function UpdatePosition() {
 	time_elapsed = (currentTime - start_time) / 1000;	
 	
 	if(time_elapsed>=game_time){
+		window.alert("You are better than " + score.toString() + " points!");
 		ResetGame();
-		window.alert("You are better than " + score + " points!");		
+		return;
 	}
 	if (score >= 100) {
 		ResetGame();
 		window.alert("Winner!!!");
+		return;
 	} else {
 		Draw();
 	}
 }
 function ResetGame(){
-	window.clearInterval(interval);
+	try{window.clearInterval(interval);} catch{}
 	score = 0;
 	life = 5;
 	audio.pause();
 	audio.currentTime = 0;
 	document.getElementById("gameScope").style.display = "none"	
+	$('#settingsDiv	').hide();
+
 	document.body.style.setProperty("zoom", "100%");
 	
 }

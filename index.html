@@ -4,13 +4,14 @@
 	<head>
 		<script src="./jquery-3.4.1.slim.min.js"></script>
 		<script type="text/javascript" src="./app.js"></script>
+		<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<link href="http://fonts.cdnfonts.com/css/games" rel="stylesheet">
 
 	</head>
 	
 	<body>	
-		<div id="helloLabel">
+		<div id="helloLabel" style="font-size: 30px;">
 			
 		</div>
 		<menu>
@@ -50,41 +51,145 @@
 				<input id = "buttonOnSignUp" value="Sign Me Up!!" type="button"><br>
 			</div>
 	
-			<div id="settingsDiv" style="display: none;">
-	
+			
+				
 			</div>
-			<div id="aboutDiv" style="display: none;">
-	
-			</div>
-			<!--Game itself-->
-			<div id="gameScope" style="display: none;">
-				<div id="game">
-					<canvas id="canvas" height="600" width="600"></canvas>
+
+
+			
+			<!-- The Modal -->
+			<div id="myModal" class="modal" style="display: none">
+
+				<!-- Modal content -->
+				<div class="modal-content">
+				<span class="close">&times;</span>
+				<p>
+					This game was developed by Ilan Korol and Ben Aidlin <br>
+					as part of a web development course in the third year of <br>
+					SISE studies in Ben Gurion University. <br><br>
+					Please feel free to log in or sign in, then control the settings, <br>
+					and finally play. You can adjust any setttings during the game itself.<br>
+				</p>
 				</div>
-				<div id="stat">
-					<div id="score">
-						<h1>
-							<label for="lblScore" class="inGameLbl">SCORE:</label>
-							<input id="lblScore"  class="inGameLbltxt" type="text" />
-						</h1>
-						
-					</div>
-					<div id="time">
-						<h1>
-							<label for="lblTime" class="inGameLbl">TIME:</label>
-							<input id="lblTime" class="inGameLbltxt" type="text" />
-						</h1>						
-					</div>
-					<div id="life">
-						<h1>
-							<label for="lblLife" class="inGameLbl">LIFE:</label>
-							<input id="lblLife" class="inGameLbltxt" type="text" />
-						</h1>
-						
-					</div>
-				</div>				
+			
 			</div>
+			
+			<script>
+			// Get the modal
+			var modal = document.getElementById("myModal");
+			
+			// Get the button that opens the modal
+			var btn = document.getElementById("aboutButton");
+			
+			// Get the <span> element that closes the modal
+			var span = document.getElementsByClassName("close")[0];
+			
+			// When the user clicks the button, open the modal 
+			btn.onclick = function() {
+				modal.style.display = "block";
+			}
+			
+			// When the user clicks on <span> (x), close the modal
+			span.onclick = function() {
+				modal.style.display = "none";
+			}
+			
+			// When the user clicks anywhere outside of the modal, close it
+			window.onclick = function(event) {
+				if (event.target == modal) {
+				modal.style.display = "none";
+				}
+			}
+			$(document).keydown(function(event) { 
+				if (event.keyCode == 27) { 
+					modal.style.display = "none";
+				}
+			})
+			</script>
+
+			<!--Game itself-->
+
+			<div id="gameScopeWrapper" style="display: flex;">
+				<div id="gameScope" style="display: none;">
+					<div id="game">
+						<canvas id="canvas" height="600" width="600"></canvas>
+					</div>
+					<div id="stat">
+						<div id="score">
+							<h1>
+								<label for="lblScore" class="inGameLbl">SCORE:</label>
+								<input id="lblScore"  class="inGameLbltxt" type="text" />
+							</h1>
+							
+						</div>
+						<div id="time">
+							<h1>
+								<label for="lblTime" class="inGameLbl">TIME:</label>
+								<input id="lblTime" class="inGameLbltxt" type="text" />
+							</h1>						
+						</div>
+						<div id="life">
+							<h1>
+								<label for="lblLife" class="inGameLbl">LIFE:</label>
+								<input id="lblLife" class="inGameLbltxt" type="text" />
+							</h1>
+							
+						</div>
+					</div>				
+				</div>
+				<div id="settingsDiv" style="display: none;">
+					<br><br>
+					<label for="upDirectionChoice" >Insert up direction:</label>
+					<input id = "upDirectionChoice" value=""><br>
+					<label for="downDirectionChoice" >Insert down direction:</label>
+					<input id = "downDirectionChoice" value=""><br>
+					<label for="leftDirectionChoice" >Insert left direction:</label>
+					<input id = "leftDirectionChoice" value=""><br>
+					<label for="rightDirectionChoice" >Insert right direction:</label>
+					<input id = "rightDirectionChoice" value=""><br>
+					<label for="prizeAmountChoice" >Insert total prize amount:</label>
+					<input id = "prizeAmountChoice" value="50"><br>
+					<label for="timeAmountChoice" >Insert total time amount:</label>
+					<input id = "timeAmountChoice" value="60"><br>
+					<label for="monsterChoice" >Insert monster amount:</label>
+					<input id = "monsterChoice" value="2"><br>	
+					<br>
+					<label for="simplePriceChoice">Choose a simple prize:</label>
+					<select id="simplePriceChoice" class="dropdown">
+					  <option value="white" style="background: white;">white</option>
+					  <option value="red" style="background: red;">red</option>
+					  <option value="green" style="background: green;">green</option>
+					  <option value="purple" style="background: purple;">purple</option>
+					  <option value="blue" style="background: blue;">blue</option>
+					  <option value="orange" style="background: orange;">orange</option>
+					  <option value="yellow" style="background: yellow;">yellow</option>
+					</select>
+					<label for="mediumPriceChoice">Choose a medium prize:</label>
+					<select id="mediumPriceChoice" class="dropdown">				  
+					  <option value="red" style="background: red;">red</option>
+					  <option value="green" style="background: green;">green</option>
+					  <option value="purple" style="background: purple;">purple</option>
+					  <option value="blue" style="background: blue;">blue</option>
+					  <option value="orange" style="background: orange;">orange</option>
+					  <option value="yellow" style="background: yellow;">yellow</option>
+					  <option value="white" style="background: white;">white</option>
+					</select>
+	<br>
+					<label for="bestPriceChoice">Choose the best prize:</label>
+					<select id="bestPriceChoice" class="dropdown" >
+						<option value="green" style="background: green;">green</option>
+					  <option value="white" style="background: white;">white</option>
+					  <option value="red" style="background: red;">red</option>				  
+					  <option value="purple" style="background: purple;">purple</option>
+					  <option value="blue" style="background: blue;">blue</option>
+					  <option value="orange" style="background: orange;">orange</option>
+					  <option value="yellow" style="background: yellow;">yellow</option>
+					</select>
 	
+					<br><input id = "randomSettings" value="I feel lucky" type="button"> <br>
+					<br>Changes will be updated after you press "Play" <br><br><br><br><br>
+			</div>
+			
 		</content>
 		<br><br><br><br>
 		<footer>
