@@ -6,7 +6,7 @@
 }
 
 header.page-header {
-    background: no-repeat left/cover url(/extensions/f4bf4154f4ef9c44ed2c57e5835460c2.jpg);
+    background: no-repeat left/cover url(./extensions/f4bf4154f4ef9c44ed2c57e5835460c2.jpg);
     display: inline-flex;
     height: 159px;
     min-width: 500px;
