@@ -224,15 +224,15 @@ function ResetMonsters(){
 		}
 		else if(random<0.5){
 			monster.i = 0;
-			monster.j = 9;
+			monster.j = 19;
 		}
 		else if(random<0.75){
-			monster.i = 9;
+			monster.i = 19;
 			monster.j = 0;
 		}
 		else {
-			monster.i = 9;
-			monster.j = 9;	
+			monster.i = 19;
+			monster.j = 19;	
 		}
 		monsters.push(monster);
 	}
@@ -241,35 +241,34 @@ function ResetMonsters(){
 function remap(){
 	board = new Array();
 	monsters = []	
-	var cnt = 100;
-	//var food_remain = 50;
-	// food<price> = <amount>
+	var cnt = 400;
 	var food25 = Math.round(0.1 * prize_amount);
 	var food15 = Math.round(0.3 * prize_amount);
 	var food5 = Math.round(0.6 * prize_amount);
 	var pacman_remain = 1;
-	var wall1i = Math.round(Math.random() *(6) + 1)
-	var wall1j = Math.round(Math.random() *(6) + 1)
-	var wall2i = Math.round(Math.random() *(6) + 1)
-	var wall2j = Math.round(Math.random() *(6) + 1)
-	var wall3i = Math.round(Math.random() *(6) + 1)
-	var wall3j = Math.round(Math.random() *(6) + 1)
+	var walls = []
+	var numwalls = 15;
+	for (var wls=0;wls<numwalls;wls++){
+		var wall = new Object();
+		wall.i = Math.round(Math.random() *(17) + 1);
+		wall.j = Math.round(Math.random() *(17) + 1);
+		walls.push(wall);
+	}
+	var iswall = false;
 	start_time = new Date();
-	for (var i = 0; i < 10; i++) {
+	for (var i = 0; i < 20; i++) {
 		board[i] = new Array();
 		//put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
-		for (var j = 0; j < 10; j++) {
-			if (
-				(i == wall1i && j == wall1j) ||				
-				(i == wall1i+1 && j == wall1j) ||
-				(i == wall1i+2 && j == wall1j) ||
-				(i == wall2i && j == wall2j) ||
-				(i == wall2i && j == wall2j+1) ||
-				(i == wall3i && j == wall3j) ||
-				(i == wall3i && j == wall3j+1) ||
-				(i == wall3i && j == wall3j+2)
-			) {
+		for (var j = 0; j < 20; j++) {
+			for(wls=0;wls<numwalls;wls++){
+				if(wls%2==0 && i>=walls[wls].i && i<=walls[wls].i+2 && j==walls[wls].j)
+					iswall=true;
+				if(wls%2!=0 && j>=walls[wls].j && j<=walls[wls].j+2 && i==walls[wls].i)
+					iswall = true;				
+			}
+			if ( iswall) {
 				board[i][j] = 4;
+				iswall = false;
 			} else {
 				var randomNum = Math.random();
 				if (randomNum <= (1.0 * (food25+food15+food5)) / cnt) {
@@ -408,7 +407,7 @@ function Start() {
 	monsters_images = [];
 	for(let l=0;l<monsters_amount;l++){
 		let randomint = Math.round(Math.random() *(8) + 1);
-		monsters_images.push("extensions/gamefigures/enemy"+ randomint.toString() + ".png");
+		monsters_images.push("extensions/gamefiguresSmall/enemy"+ randomint.toString() + ".png");
 	}
 	remap();
 	addEventListener(
@@ -426,15 +425,15 @@ function Start() {
 		false
 	);
 	try{clearInterval(interval);}catch{} // make sure no interval is working before starting a new one
-	interval = setInterval(UpdatePosition, 85);
+	interval = setInterval(UpdatePosition, 60);
 }
 
 function findRandomPossibleCell(board, possible_values) {
-	var i = Math.floor(Math.random() * 9 + 1);
-	var j = Math.floor(Math.random() * 9 + 1);
+	var i = Math.floor(Math.random() * 18 + 1);
+	var j = Math.floor(Math.random() * 18 + 1);
 	while (!possible_values.includes(board[i][j])) {
-		i = Math.floor(Math.random() * 9 + 1);
-		j = Math.floor(Math.random() * 9 + 1);
+		i = Math.floor(Math.random() * 18 + 1);
+		j = Math.floor(Math.random() * 18 + 1);
 	}
 	return [i, j];
 }
@@ -459,28 +458,28 @@ function GetKeyPressed() {
 
 function DrawShape(cntx ,prize_color, x, y){
 	cntx.beginPath();
-	cntx.arc(x, y, 15, 0, 2 * Math.PI); // circle
+	cntx.arc(x, y, 7, 0, 2 * Math.PI); // circle
 	cntx.fillStyle = prize_color; //color
 	cntx.fill();
 }
 function DrawImage(cntx, source, x, y){
-	var img = new Image();
+	var img = new Image(10,10);
 	img.src = source					
-	cntx.drawImage(img, x - 30, y-30)				
+	cntx.drawImage(img, x - 15, y-15)				
 }
 
 function DrawBoard(){
-	for (var i = 0; i < 10; i++) {
-		for (var j = 0; j < 10; j++) {
+	for (var i = 0; i < 20; i++) {
+		for (var j = 0; j < 20; j++) {
 			var center = new Object();
-			center.x = i * 60 + 30;
-			center.y = j * 60 + 30;
+			center.x = i * 30 + 15;
+			center.y = j * 30 + 15;
 			switch(board[i][j]){
 				case 2:
-					DrawImage(context, "extensions/gamefigures/pacman" + direction +".png", center.x, center.y);
+					DrawImage(context, "extensions/gamefiguresSmall/pacman" + direction +".png", center.x, center.y);
 					break;
 				case 4:
-					DrawImage(context, "extensions/wall.jpg", center.x, center.y);
+					DrawImage(context, "extensions/gamefiguresSmall/wall.png", center.x, center.y);
 					break;
 				case 5:
 					DrawShape(context ,prize_5, center.x, center.y);
@@ -492,46 +491,29 @@ function DrawBoard(){
 					DrawShape(context ,prize_25, center.x, center.y)
 					break;
 				case 100:
-					DrawImage(context, "extensions/med.jpg", center.x, center.y);	
+					DrawImage(context, "extensions/gamefiguresSmall/med.png", center.x, center.y);	
 					break;
 				case 200:
-					DrawImage(context, "extensions/clock.jpg", center.x, center.y);		
+					DrawImage(context, "extensions/gamefiguresSmall/clock.jpg", center.x, center.y);		
 					break;
 			}
-			/*
-			if (board[i][j] == 2) {			
-				DrawImage(context, "extensions/gamefigures/pacman" + direction +".png", center.x, center.y);				
-			} else if (board[i][j] == 5) {
-				DrawShape(context ,prize_5, center.x, center.y)				
-			}else if (board[i][j] == 15) {
-				DrawShape(context ,prize_15, center.x, center.y)				
-			}else if (board[i][j] == 25) {
-				DrawShape(context ,prize_25, center.x, center.y)				
-			} else if (board[i][j] == 4) {
-				DrawImage(context, "extensions/wall.jpg", center.x, center.y);
-				
-			}else if (board[i][j] == 100) {
-				DrawImage(context, "extensions/med.jpg", center.x, center.y);				
-			}else if (board[i][j] == 200) {
-				DrawImage(context, "extensions/clock.jpg", center.x, center.y);				
-			}*/
 		}
 	}
 }
 function DrawMonstersAndMoving(){
 	for (let k=0;k<monsters_amount;k++){
-		centerx = monsters[k].i * 60 + 30;
-		centery = monsters[k].j * 60 + 30;
-		var img2 = new Image();		
+		centerx = monsters[k].i * 30 + 15;
+		centery = monsters[k].j * 30 + 15;
+		var img2 = new Image(10,10);		
 		img2.src = monsters_images[k];
-		context.drawImage(img2, centerx - 30, centery-30)
+		context.drawImage(img2, centerx - 15, centery-15)
 	}
 	// draw moving score
 	if(moving_score!=null){
-		let centerxmoving = moving_score.i *60 +30;
-		let centerymoving = moving_score.j *60 +30;
-		var img3 = new Image();
-		img3.src = "extensions/gamefigures/moving.png"
+		let centerxmoving = moving_score.i *30 +15;
+		let centerymoving = moving_score.j *30 +15;
+		var img3 = new Image(10,10);
+		img3.src = "extensions/gamefiguresSmall/moving.png"
 		context.drawImage(img3, centerxmoving-30, centerymoving-30);
 	}
 }
@@ -556,7 +538,7 @@ function UpdateShapeAndDirection(){
 		}
 	}
 	if (x == 2) {
-		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
+		if (shape.j < 19 && board[shape.i][shape.j + 1] != 4) {
 			shape.j++;
 			direction = "down"
 		}
@@ -568,7 +550,7 @@ function UpdateShapeAndDirection(){
 		}
 	}
 	if (x == 4) {
-		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
+		if (shape.i < 19 && board[shape.i + 1][shape.j] != 4) {
 			shape.i++;
 			direction = "right"
 		}
@@ -625,19 +607,39 @@ function UpdatePosition() {
 			 enemy_move_counter-=1;
 			 continue;
 		}
-		enemy_move_counter = 8;
-		if(shape.i > monsters[k].i && board[monsters[k].i+1][monsters[k].j] != 4){
-			monsters[k].i+=1;
+		enemy_move_counter = monsters_amount;
+		// random if move up/down or left/right
+		let randmove = Math.floor(Math.random() * 2)
+		switch(randmove){
+			case 0:
+				if(shape.i > monsters[k].i && board[monsters[k].i+1][monsters[k].j] != 4){
+					monsters[k].i+=1;
+				}
+				else if(shape.i < monsters[k].i && board[monsters[k].i-1][monsters[k].j] != 4){
+					monsters[k].i-=1;
+				}
+				break;
+			default:
+				if(shape.j > monsters[k].j && board[monsters[k].i][monsters[k].j+1] != 4){
+					monsters[k].j+=1;
+				}
+				else if(shape.j < monsters[k].j && board[monsters[k].i][monsters[k].j-1] != 4){
+					monsters[k].j-=1;
+				}
+				break;
 		}
-		else if(shape.i < monsters[k].i && board[monsters[k].i-1][monsters[k].j] != 4){
-			monsters[k].i-=1;
-		}
-		else if(shape.j > monsters[k].j && board[monsters[k].i][monsters[k].j+1] != 4){
-			monsters[k].j+=1;
-		}
-		else if(shape.j < monsters[k].j && board[monsters[k].i][monsters[k].j-1] != 4){
-			monsters[k].j-=1;
-		}
+		// if(shape.i > monsters[k].i && board[monsters[k].i+1][monsters[k].j] != 4){
+		// 	monsters[k].i+=1;
+		// }
+		// else if(shape.i < monsters[k].i && board[monsters[k].i-1][monsters[k].j] != 4){
+		// 	monsters[k].i-=1;
+		// }
+		// else if(shape.j > monsters[k].j && board[monsters[k].i][monsters[k].j+1] != 4){
+		// 	monsters[k].j+=1;
+		// }
+		// else if(shape.j < monsters[k].j && board[monsters[k].i][monsters[k].j-1] != 4){
+		// 	monsters[k].j-=1;
+		// }
 	}	
 	board[shape.i][shape.j] = 2;
 	var currentTime = new Date();
