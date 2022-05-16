@@ -575,11 +575,11 @@ function UpdatePrizes(){
 	}
 	if(moving_score!=null){
 		let random_move = Math.random();
-		if(random_move<0.25 && board[moving_score.i+1][moving_score.j]!=4 && moving_score.i<9) 
+		if(random_move<0.25 && board[moving_score.i+1][moving_score.j]!=4 && moving_score.i<19) 
 			moving_score.i +=1;
 		else if(random_move<0.5 && board[moving_score.i-1][moving_score.j]!=4 && moving_score.i>0) 
 			moving_score.i -=1;
-		else if(random_move<0.75 && board[moving_score.i][moving_score.j+1]!=4 && moving_score.j<9) 
+		else if(random_move<0.75 && board[moving_score.i][moving_score.j+1]!=4 && moving_score.j<19) 
 			moving_score.j +=1;
 		else if(board[moving_score.i][moving_score.j-1]!=4 && moving_score.j>1) 
 			moving_score.j -=1;
