@@ -406,7 +406,7 @@ function Start() {
 	moving_score = new Object();
 	monsters_images = [];
 	for(let l=0;l<monsters_amount;l++){
-		let randomint = Math.round(Math.random() *(8) + 1);
+		let randomint = Math.round(Math.random() *(7) + 1);
 		monsters_images.push("extensions/gamefiguresSmall/enemy"+ randomint.toString() + ".png");
 	}
 	remap();
