@@ -30,6 +30,8 @@ var direction = "right"
 
 
 $(document).ready(function() {	
+	database = JSON.parse(localStorage.getItem('database'));
+	if(database==null) database = []
 	var k = {username: "k", password:"k"}
 	database.push(k)
 	$("#signInButton").click(function(){
@@ -169,8 +171,9 @@ function SignUpFunc(){
 	if(!valid){
 		alert("please check your details");		
 	}
-	else{
+	else{		
 		database.push({username: $("#userNameOnSignUp").val(), password:$("#passwdOnSignUp").val()})		
+		localStorage.setItem('database', JSON.stringify(database));
 		$("#signUpDiv").hide();		
 		$("#signInDiv").show();		
 		
@@ -349,7 +352,9 @@ function remap(){
 
 
 
+
 function ApplySettings(){
+	// check all settings are valid, save what is changed
 	if(isNaN($("#prizeAmountChoice").val())){
 		alert("Please insert a number for prize amount in settings!"); 
 		$("#gameScope").hide();
@@ -420,29 +425,22 @@ function Start() {
 		},
 		false
 	);
-	try{clearInterval(interval);}catch{}
+	try{clearInterval(interval);}catch{} // make sure no interval is working before starting a new one
 	interval = setInterval(UpdatePosition, 85);
 }
 
-function findRandomEmptyCell(board) {
+function findRandomPossibleCell(board, possible_values) {
 	var i = Math.floor(Math.random() * 9 + 1);
 	var j = Math.floor(Math.random() * 9 + 1);
-	while (board[i][j] != 0) {
+	while (!possible_values.includes(board[i][j])) {
 		i = Math.floor(Math.random() * 9 + 1);
 		j = Math.floor(Math.random() * 9 + 1);
 	}
 	return [i, j];
 }
+function findRandomEmptyCell(board){ return findRandomPossibleCell(board, [0]); }
+function findRandomNotWallCell(){return findRandomPossibleCell(board, [0, 5, 15, 25]); }
 
-function findRandomNotWallCell(){
-	var i = Math.floor(Math.random() * 9 + 1);
-	var j = Math.floor(Math.random() * 9 + 1);
-	while (board[i][j] != 0 && board[i][j] != 5 && board[i][j] != 15 && board[i][j] != 25) {
-		i = Math.floor(Math.random() * 9 + 1);
-		j = Math.floor(Math.random() * 9 + 1);
-	}
-	return [i, j];
-}
 
 function GetKeyPressed() {
 	if (keysDown[move_up[0]]) { //up
@@ -459,64 +457,68 @@ function GetKeyPressed() {
 	}
 }
 
-function Draw() {
-	canvas.width = canvas.width; //clean board
-	lblScore.value = score;
-	lblTime.value = time_elapsed;
-	lblLife.value = life.toString() + " life left";
-	// draw board	
+function DrawShape(cntx ,prize_color, x, y){
+	cntx.beginPath();
+	cntx.arc(x, y, 15, 0, 2 * Math.PI); // circle
+	cntx.fillStyle = prize_color; //color
+	cntx.fill();
+}
+function DrawImage(cntx, source, x, y){
+	var img = new Image();
+	img.src = source					
+	cntx.drawImage(img, x - 30, y-30)				
+}
+
+function DrawBoard(){
 	for (var i = 0; i < 10; i++) {
 		for (var j = 0; j < 10; j++) {
 			var center = new Object();
 			center.x = i * 60 + 30;
 			center.y = j * 60 + 30;
-			if (board[i][j] == 2) {			
-				var img = new Image();
-				img.src = "extensions/gamefigures/pacman" + direction +".png";					
-				context.drawImage(img, center.x - 30, center.y-30)				
-			} else if (board[i][j] == 5) {
-				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-				context.fillStyle = prize_5; //color
-				context.fill();
-			}else if (board[i][j] == 15) {
-				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-				context.fillStyle = prize_15; //color
-				context.fill();
-			}else if (board[i][j] == 25) {
-				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-				context.fillStyle = prize_25; //color
-				context.fill();			
-			} else if (board[i][j] == 4) {
-				var imgwall = new Image();
-				imgwall.src = "extensions/wall.jpg";
-				context.drawImage(imgwall, center.x - 30, center.y-30)				
-				/*context.beginPath();
-				context.rect(center.x - 30, center.y - 30, 60, 60);
-				context.fillStyle = "white"; //color
-				context.fill();*/
-			}else if (board[i][j] == 100) {
-				var imgwall = new Image();
-				imgwall.src = "extensions/med.jpg";
-				context.drawImage(imgwall, center.x - 30, center.y-30)				
-				/*context.beginPath();
-				context.rect(center.x - 30, center.y - 30, 60, 60);
-				context.fillStyle = "white"; //color
-				context.fill();*/
-			}else if (board[i][j] == 200) {
-				var imgwall = new Image();
-				imgwall.src = "extensions/clock.jpg";
-				context.drawImage(imgwall, center.x - 30, center.y-30)				
-				/*context.beginPath();
-				context.rect(center.x - 30, center.y - 30, 60, 60);
-				context.fillStyle = "white"; //color
-				context.fill();*/
+			switch(board[i][j]){
+				case 2:
+					DrawImage(context, "extensions/gamefigures/pacman" + direction +".png", center.x, center.y);
+					break;
+				case 4:
+					DrawImage(context, "extensions/wall.jpg", center.x, center.y);
+					break;
+				case 5:
+					DrawShape(context ,prize_5, center.x, center.y);
+					break;
+				case 15:
+					DrawShape(context ,prize_15, center.x, center.y)
+					break;
+				case 25:
+					DrawShape(context ,prize_25, center.x, center.y)
+					break;
+				case 100:
+					DrawImage(context, "extensions/med.jpg", center.x, center.y);	
+					break;
+				case 200:
+					DrawImage(context, "extensions/clock.jpg", center.x, center.y);		
+					break;
 			}
+			/*
+			if (board[i][j] == 2) {			
+				DrawImage(context, "extensions/gamefigures/pacman" + direction +".png", center.x, center.y);				
+			} else if (board[i][j] == 5) {
+				DrawShape(context ,prize_5, center.x, center.y)				
+			}else if (board[i][j] == 15) {
+				DrawShape(context ,prize_15, center.x, center.y)				
+			}else if (board[i][j] == 25) {
+				DrawShape(context ,prize_25, center.x, center.y)				
+			} else if (board[i][j] == 4) {
+				DrawImage(context, "extensions/wall.jpg", center.x, center.y);
+				
+			}else if (board[i][j] == 100) {
+				DrawImage(context, "extensions/med.jpg", center.x, center.y);				
+			}else if (board[i][j] == 200) {
+				DrawImage(context, "extensions/clock.jpg", center.x, center.y);				
+			}*/
 		}
 	}
-	// draw monsters
+}
+function DrawMonstersAndMoving(){
 	for (let k=0;k<monsters_amount;k++){
 		centerx = monsters[k].i * 60 + 30;
 		centery = monsters[k].j * 60 + 30;
@@ -533,8 +535,18 @@ function Draw() {
 		context.drawImage(img3, centerxmoving-30, centerymoving-30);
 	}
 }
+function Draw() {
+	canvas.width = canvas.width; //clean board
+	lblScore.value = score;
+	lblTime.value = time_elapsed;
+	lblLife.value = life.toString() + " life left";
+	// draw board	
+	DrawBoard();
+	// draw monsters
+	DrawMonstersAndMoving();
+}
 
-function UpdatePosition() {
+function UpdateShapeAndDirection(){
 	board[shape.i][shape.j] = 0;
 	var x = GetKeyPressed();
 	if (x == 1) {
@@ -561,6 +573,9 @@ function UpdatePosition() {
 			direction = "right"
 		}
 	}
+}
+
+function UpdatePrizes(){
 	if (board[shape.i][shape.j] == 5 || board[shape.i][shape.j] == 15 || board[shape.i][shape.j] == 25) {
 		score+=board[shape.i][shape.j];
 	}
@@ -587,7 +602,14 @@ function UpdatePosition() {
 		else if(board[moving_score.i][moving_score.j-1]!=4 && moving_score.j>1) 
 			moving_score.j -=1;
 	}
+}
+function UpdateMonsters(){
 
+}
+function UpdatePosition() {
+	UpdateShapeAndDirection();
+	UpdatePrizes();
+	// update monsters and result
 	for(let k=0;k<monsters_amount;k++){
 		if(shape.i == monsters[k].i && shape.j == monsters[k].j){
 			score -= 10;
