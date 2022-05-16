@@ -588,6 +588,20 @@ function UpdatePrizes(){
 function UpdateMonsters(){
 
 }
+function MoveAnywhere(monster){
+	if(board[monster.i+1][monster.j] != 4){
+			monster.i+=1;
+		}
+		else if(board[monster.i-1][monster.j] != 4){
+			monster.i-=1;
+		}
+		else if(board[monster.i][monster.j+1] != 4){
+			monster.j+=1;
+		}
+		else if(board[monster.i][monster.j-1] != 4){
+			monster.j-=1;
+		}
+}
 function UpdatePosition() {
 	UpdateShapeAndDirection();
 	UpdatePrizes();
@@ -611,35 +625,25 @@ function UpdatePosition() {
 		// random if move up/down or left/right
 		let randmove = Math.floor(Math.random() * 2)
 		switch(randmove){
-			case 0:
+			case 0: // right left
 				if(shape.i > monsters[k].i && board[monsters[k].i+1][monsters[k].j] != 4){
 					monsters[k].i+=1;
 				}
 				else if(shape.i < monsters[k].i && board[monsters[k].i-1][monsters[k].j] != 4){
 					monsters[k].i-=1;
 				}
+				else MoveAnywhere(monsters[k]);
 				break;
-			default:
+			default: // up down
 				if(shape.j > monsters[k].j && board[monsters[k].i][monsters[k].j+1] != 4){
 					monsters[k].j+=1;
 				}
 				else if(shape.j < monsters[k].j && board[monsters[k].i][monsters[k].j-1] != 4){
 					monsters[k].j-=1;
 				}
+				else MoveAnywhere(monsters[k]);
 				break;
 		}
-		// if(shape.i > monsters[k].i && board[monsters[k].i+1][monsters[k].j] != 4){
-		// 	monsters[k].i+=1;
-		// }
-		// else if(shape.i < monsters[k].i && board[monsters[k].i-1][monsters[k].j] != 4){
-		// 	monsters[k].i-=1;
-		// }
-		// else if(shape.j > monsters[k].j && board[monsters[k].i][monsters[k].j+1] != 4){
-		// 	monsters[k].j+=1;
-		// }
-		// else if(shape.j < monsters[k].j && board[monsters[k].i][monsters[k].j-1] != 4){
-		// 	monsters[k].j-=1;
-		// }
 	}	
 	board[shape.i][shape.j] = 2;
 	var currentTime = new Date();
